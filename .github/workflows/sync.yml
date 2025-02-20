@@ -1,0 +1,34 @@
+名称 ：同步叉
+
+在 ：
+  日程 ：
+    # 使用UTC 时间，每小时的第0 分钟执行（即整点执行）
+    - cron  : ' 0 * * * * '    # 星号表示每小时执行
+  workflow_dispatch  :       # 保留手动触发功能
+
+工作  ：
+  同步  ：
+    运行  ： ubuntu-latest
+    步骤  ：
+      -名称  ：结帐
+        用途  ： Action/Checkout@V4
+        和  ：
+          提取深度  ：0
+
+      - name :配置Git
+        运行 ：|
+          git config -lobal user.name“ github action”
+          git配置-global user.email“ action@github.com”
+
+      - name :添加上游仓库
+        运行 ：|
+          git远程添加上游https://github.com/celin1286/xiaosa
+
+      - name :获取上游更新
+        运行 ： git上游获取
+
+      - name :合并并推送
+        运行 ：|
+          Git Checkout Main
+          git合并上游/主
+          git推出原点
