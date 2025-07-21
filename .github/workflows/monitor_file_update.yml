@@ -1,57 +1,76 @@
-名字：Download and Update Files
+# 工作流名称
+name: Download and Update Files
 
-在请将以下网页文本翻译成中文，只输出翻译结果，不输出任何其他解释，若文本已经是中文了，则直接用中文复述一遍。翻译结果保持格式不变。输入：:
-  # 允许手动触发
-  工作流派送:
-  # 定时运行
-  日程安排:
-    - cron: '*/60 * * * *'# 每60分钟运行一次*/60 * * * *'  
+on:
+  # 允许手动从 Actions 页面触发此工作流
+  workflow_dispatch:
 
-工作:
-  下载并更新:
-    运行于: ubuntu-latest
-    权限:
-      目录：write
-      
-    步骤:
-      - 名称: Checkout repository
-        用途：actions/checkout@v4
+  # 设置定时任务
+  schedule:
+    # 每小时的第0分钟运行一次（例如 01:00, 02:00 ...）
+    # Cron 语法: '分钟 小时 日 月 星期'
+    - cron: '0 * * * *'
 
-      - 名称: Download and extract file
-        运行： |
-          # 创建临时目录
+jobs:
+  # 定义一个名为 "download-and-update" 的任务
+  download-and-update:
+    # 指定任务运行在最新版的 Ubuntu 虚拟环境中
+    runs-on: ubuntu-latest
+    
+    # 为此任务中的所有步骤授予权限
+    permissions:
+      # 需要写入权限才能提交更改到仓库
+      contents: write
+
+    # 任务执行的步骤
+    steps:
+      # 第一步：检出（下载）你的仓库代码到虚拟环境中
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 第二步：下载并解压文件
+      - name: Download and extract file
+        run: |
+          # 创建一个临时目录用于存放下载的文件
           mkdir -p temp_download
           cd temp_download
           
-          # 下载文件
+          # 下载指定的文件
           echo "开始下载文件..."
           curl -L -o "single_line.zip" "https://gitee.com/PizazzXS/another-d/raw/master/单线路.zip"
           
+          # 检查文件是否下载成功
           if [ -f "single_line.zip" ]; then
             echo "文件下载成功，开始解压..."
-            # 解压到项目根目录，覆盖现有文件
+            # 使用 -o 选项解压并覆盖到项目根目录
             unzip -o single_line.zip -d ../
-            echo "文件解压完成"
+            echo "文件解压完成。"
           else
-            echo "文件下载失败"
+            echo "文件下载失败！"
             exit 1
           fi
           
-          # 清理临时文件
+          # 清理临时目录和文件
           cd ..
           rm -rf temp_download
 
-      - 名称: - 名称：检查并提交更改
-        运行： |
+      # 第三步：检查文件是否有变动，并自动提交
+      - name: Check and commit changes
+        run: |
+          # 配置 git 的用户名和邮箱，用于提交
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git 配置 -- 本地用户名称 "github-actions[bot]"
+          git config --local user.name "github-actions[bot]"
           
+          # 检查仓库状态，-n 判断 git status --porcelain 的输出是否非空
           if [[ -n $(git status --porcelain) ]]; then
-            检测到文件变更，提交更新...
+            echo "检测到文件变更，正在提交更新..."
+            # 添加所有更改到暂存区
             git add .
-            git commit -m "更新: 更新单线路文件 $(date ' +%Y-%m-%d %H:%M:%S')"
-            git 推送
-            更新已推送到仓库
-          否则
-            echo "没有检测到文件变更"
-          输入：fi
+            # 提交更改，并附上包含当前日期的提交信息
+            git commit -m "更新: 更新单线路文件 $(date '+%Y-%m-%d %H:%M:%S')"
+            # 推送提交到远程仓库
+            git push
+            echo "更新已成功推送到仓库。"
+          else
+            echo "没有检测到文件变更，无需提交。"
+          fi
