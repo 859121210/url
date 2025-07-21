@@ -1,31 +1,31 @@
-name: Download and Update Files
+名字：Download and Update Files
 
-on:
+在请将以下网页文本翻译成中文，只输出翻译结果，不输出任何其他解释，若文本已经是中文了，则直接用中文复述一遍。翻译结果保持格式不变。输入：:
   # 允许手动触发
-  workflow_dispatch:
+  工作流派送:
   # 定时运行
-  schedule:
-    - cron: '*/60 * * * *'  # 每60分钟运行一次
+  日程安排:
+    - cron: '*/60 * * * *'# 每60分钟运行一次*/60 * * * *'  
 
-jobs:
-  download-and-update:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+工作:
+  下载并更新:
+    运行于: ubuntu-latest
+    权限:
+      目录：write
       
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    步骤:
+      - 名称: Checkout repository
+        用途：actions/checkout@v4
 
-      - name: Download and extract file
-        run: |
+      - 名称: Download and extract file
+        运行： |
           # 创建临时目录
           mkdir -p temp_download
           cd temp_download
           
           # 下载文件
           echo "开始下载文件..."
-          curl -L -o "single_line.zip" "https://jihulab.com/fourd/FourD/-/raw/main/local/单线路.zip"
+          curl -L -o "single_line.zip" "https://gitee.com/PizazzXS/another-d/raw/master/单线路.zip"
           
           if [ -f "single_line.zip" ]; then
             echo "文件下载成功，开始解压..."
@@ -41,17 +41,17 @@ jobs:
           cd ..
           rm -rf temp_download
 
-      - name: Check and commit changes
-        run: |
+      - 名称: - 名称：检查并提交更改
+        运行： |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
+          git 配置 -- 本地用户名称 "github-actions[bot]"
           
-          if [[ -n "$(git status --porcelain)" ]]; then
-            echo "检测到文件变更，提交更新..."
+          if [[ -n $(git status --porcelain) ]]; then
+            检测到文件变更，提交更新...
             git add .
-            git commit -m "Update: 更新单线路文件 $(date '+%Y-%m-%d %H:%M:%S')"
-            git push
-            echo "更新已推送到仓库"
-          else
+            git commit -m "更新: 更新单线路文件 $(date ' +%Y-%m-%d %H:%M:%S')"
+            git 推送
+            更新已推送到仓库
+          否则
             echo "没有检测到文件变更"
-          fi
+          输入：fi
