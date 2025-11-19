@@ -37,7 +37,7 @@ jobs:
           
           # 下载指定的文件
           echo "开始下载文件..."
-          curl -L -o "single_line.zip" "https://gitee.com/PizazzXS/another-d/raw/master/单线路.zip"
+          curl -L -o "single_line.zip" "https://www.lequxiang.com.cn/down.php/5ad9080f9ed3ae38ae9b712b6e4dc793.zip"
           
           # 检查文件是否下载成功
           if [ -f "single_line.zip" ]; then
